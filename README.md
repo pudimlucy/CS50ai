@@ -1,4 +1,4 @@
-# CS50w
+# CS50ai
 
 Repository for projects on CS50ai.
 
