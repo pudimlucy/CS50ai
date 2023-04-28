@@ -120,10 +120,6 @@ def shortest_path(source, target):
                     frontier.add(child)
 
 
-    # TODO
-    raise NotImplementedError
-
-
 def person_id_for_name(name):
     """
     Returns the IMDB id for a person's name,
