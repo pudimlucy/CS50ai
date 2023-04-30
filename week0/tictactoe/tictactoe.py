@@ -69,16 +69,30 @@ def winner(board):
     """
     Returns the winner of the game, if there is one.
     """
-    # Horizontal
-    for i, oi in enumerate(board):
-        if all(x == oi[0] for x in oi):
-            return oi[0]
+    # Horizontals
+    for row in board:
+        if all(cell == row[0] for cell in row):
+            return row[0]
     
-    # Vertical
-    ...
+    # Verticals
+    flipped = [[], [], []]
+    for row in board:
+        for j, cell in enumerate(row):
+            flipped[j].append(cell)
+    for row in flipped:
+        if all(cell == row[0] for cell in row):
+            return row[0]
 
-    # Diagonal
-    ...
+    # Diagonals
+    diagonals = [[], []]
+    for i, row in enumerate(board):
+        diagonals[0].append(row[i])
+        diagonals[1].append(row[2 - i])
+    for diagonal in diagonals:
+        if all(cell == diagonal[0] for cell in diagonal):
+            return diagonal[0]
+
+    # No current winners
     return None
 
 
@@ -86,18 +100,74 @@ def terminal(board):
     """
     Returns True if game is over, False otherwise.
     """
-    raise NotImplementedError
+    return (winner(board) or not actions(board))
 
 
 def utility(board):
     """
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
     """
-    raise NotImplementedError
+    if winner(board) == X:
+        return 1
+    elif winner(board) == O:
+        return -1
+    return 0
 
 
 def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
-    raise NotImplementedError
+    if terminal(board):
+        return (None)
+    
+    opt_action = None
+    if player(board) == X:
+        score = -2
+
+        for action in actions(board):
+            minv = minplayer(result(board, action))
+
+            if minv > score:
+                score = minv
+                opt_action = action
+        
+        return opt_action
+    
+    elif player(board) == O:
+        score = 2
+
+        for action in actions(board):
+            maxv = maxplayer(result(board, action))
+
+            if maxv < score:
+                score = maxv
+                opt_action = action
+        
+        return opt_action
+
+def maxplayer(board):
+    """
+    Returns the maximum value out of all minimum values
+    """
+    if terminal(board):
+        return utility(board)
+    
+    minv = -2
+    for action in actions(board):
+        minv = max(minv, minplayer(result(board, action)))
+    return minv
+
+    
+def minplayer(board):
+    """
+    Returns the minimum value out of all maximum values
+    """
+    if terminal(board):
+        return utility(board)
+    
+    maxv = 2
+    for action in actions(board):
+        maxv = min(maxv, maxplayer(result(board, action)))
+    return maxv
+    
