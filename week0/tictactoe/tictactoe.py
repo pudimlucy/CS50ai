@@ -123,7 +123,7 @@ def minimax(board):
     
     opt_action = None
     if player(board) == X:
-        score = -2
+        score = -math.inf
 
         for action in actions(board):
             minv = minplayer(result(board, action))
@@ -135,7 +135,7 @@ def minimax(board):
         return opt_action
     
     elif player(board) == O:
-        score = 2
+        score = math.inf
 
         for action in actions(board):
             maxv = maxplayer(result(board, action))
@@ -153,7 +153,7 @@ def maxplayer(board):
     if terminal(board):
         return utility(board)
     
-    minv = -2
+    minv = -math.inf
     for action in actions(board):
         minv = max(minv, minplayer(result(board, action)))
     return minv
@@ -166,7 +166,7 @@ def minplayer(board):
     if terminal(board):
         return utility(board)
     
-    maxv = 2
+    maxv = math.inf
     for action in actions(board):
         maxv = min(maxv, maxplayer(result(board, action)))
     return maxv
