@@ -72,7 +72,10 @@ def winner(board):
     # Horizontals
     for row in board:
         if all(cell == row[0] for cell in row):
-            return row[0]
+            if row[0] == X:
+                return X
+            if row[0] == O:
+                return O
     
     # Verticals
     flipped = [[], [], []]
@@ -81,7 +84,10 @@ def winner(board):
             flipped[j].append(cell)
     for row in flipped:
         if all(cell == row[0] for cell in row):
-            return row[0]
+            if row[0] == X:
+                return X
+            if row[0] == O:
+                return O
 
     # Diagonals
     diagonals = [[], []]
@@ -90,7 +96,10 @@ def winner(board):
         diagonals[1].append(row[2 - i])
     for diagonal in diagonals:
         if all(cell == diagonal[0] for cell in diagonal):
-            return diagonal[0]
+            if diagonal[0] == X:
+                return X
+            if diagonal[0] == O:
+                return O
 
     # No current winners
     return None
