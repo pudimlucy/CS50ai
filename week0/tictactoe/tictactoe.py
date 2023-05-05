@@ -2,7 +2,6 @@
 Tic Tac Toe Player
 """
 
-import math
 import copy
 
 X = "X"
@@ -127,56 +126,59 @@ def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
+
     if terminal(board):
-        return (None)
-    
-    opt_action = None
-    if player(board) == X:
-        score = -math.inf
+        return None
 
-        for action in actions(board):
-            minv = minplayer(result(board, action))
-
-            if minv > score:
-                score = minv
-                opt_action = action
+    def maxplayer(board, beta=10):
+        """
+        Returns the maximum value out of all minimum values
+        """
+        if terminal(board):
+            return (utility(board), None)
         
+        score = -2
+        opt_action = None
+        
+        for action in actions(board):
+            if beta <= score:
+                break
+            
+            minplayer_result = minplayer(result(board, action), score)
+            if minplayer_result[0] > score:
+                score = minplayer_result[0]
+                opt_action = action
+
+        return (score, opt_action)
+
+    
+    def minplayer(board, alpha=-10):
+        """
+        Returns the minimum value out of all maximum values
+        """
+        if terminal(board):
+            return (utility(board), None)
+        
+        score = 2
+        opt_action = None
+        
+        for action in actions(board):
+            if alpha >= score:
+                break
+            
+            maxplayer_result = maxplayer(result(board, action), score)
+            if maxplayer_result[0] < score:
+                score = maxplayer_result[0]
+                opt_action = action
+
+        return (score, opt_action)
+    
+    
+    if player(board) == X:
+        opt_action = maxplayer(board)[1]     
         return opt_action
     
     elif player(board) == O:
-        score = math.inf
-
-        for action in actions(board):
-            maxv = maxplayer(result(board, action))
-
-            if maxv < score:
-                score = maxv
-                opt_action = action
-        
+        opt_action = minplayer(board)[1]     
         return opt_action
-
-def maxplayer(board):
-    """
-    Returns the maximum value out of all minimum values
-    """
-    if terminal(board):
-        return utility(board)
-    
-    minv = -math.inf
-    for action in actions(board):
-        minv = max(minv, minplayer(result(board, action)))
-    return minv
-
-    
-def minplayer(board):
-    """
-    Returns the minimum value out of all maximum values
-    """
-    if terminal(board):
-        return utility(board)
-    
-    maxv = math.inf
-    for action in actions(board):
-        maxv = min(maxv, maxplayer(result(board, action)))
-    return maxv
     
