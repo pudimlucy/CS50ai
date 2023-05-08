@@ -130,7 +130,7 @@ def minimax(board):
     if terminal(board):
         return None
 
-    def maxplayer(board, beta=10):
+    def maxplayer(board, beta=2):
         """
         Returns the maximum value out of all minimum values
         """
@@ -143,7 +143,7 @@ def minimax(board):
         for action in actions(board):
             if beta <= score:
                 break
-            
+
             minplayer_result = minplayer(result(board, action), score)
             if minplayer_result[0] > score:
                 score = minplayer_result[0]
@@ -152,7 +152,7 @@ def minimax(board):
         return (score, opt_action)
 
     
-    def minplayer(board, alpha=-10):
+    def minplayer(board, alpha=-2):
         """
         Returns the minimum value out of all maximum values
         """
