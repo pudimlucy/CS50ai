@@ -188,7 +188,7 @@ class MinesweeperAI():
                if they can be inferred from existing knowledge
         """
 
-        # 1), 2)
+        # 1), 2) working properly.
         self.moves_made.add(cell)
         self.mark_safe(cell)
         i, j = cell
@@ -196,7 +196,7 @@ class MinesweeperAI():
         print(f"moves_made upated: {self.moves_made}")
         print(f"Move at {i}, {j}.")
 
-        # 3)
+        # 3) working properly.
         cells = set()
         for i in range(cell[0]-1, cell[0]+2):
             for j in range(cell[1]-1, cell[1]+2):
