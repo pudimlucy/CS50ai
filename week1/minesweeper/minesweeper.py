@@ -1,5 +1,6 @@
 import itertools
 import random
+import copy
 
 
 class Minesweeper():
@@ -105,13 +106,15 @@ class Sentence():
         """
         Returns the set of all cells in self.cells known to be mines.
         """
-        return self.cells if len(self.cells) == self.count else set()
+        if self.count == len(self.cells):
+            return self.cells
 
     def known_safes(self):
         """
         Returns the set of all cells in self.cells known to be safe.
         """
-        return self.cells if len(self.cells) == 0 else set()
+        if self.count == 0:
+            return self.cells
 
     def mark_mine(self, cell):
         """
@@ -121,6 +124,8 @@ class Sentence():
         if cell in self.cells:
             self.cells.remove(cell)
             self.count -= 1
+        else:
+            pass
 
     def mark_safe(self, cell):
         """
@@ -129,6 +134,8 @@ class Sentence():
         """
         if cell in self.cells:
             self.cells.remove(cell)
+        else:
+            pass
 
 
 class MinesweeperAI():
@@ -160,7 +167,6 @@ class MinesweeperAI():
         self.mines.add(cell)
         for sentence in self.knowledge:
             sentence.mark_mine(cell)
-        print(f"mines updated: {self.mines}")
 
     def mark_safe(self, cell):
         """
@@ -170,7 +176,6 @@ class MinesweeperAI():
         self.safes.add(cell)
         for sentence in self.knowledge:
             sentence.mark_safe(cell)
-        print(f"safes updated: {self.safes}")
 
     def add_knowledge(self, cell, count):
         """
@@ -188,30 +193,89 @@ class MinesweeperAI():
                if they can be inferred from existing knowledge
         """
 
-        # 1), 2) working properly.
+        # 1)
         self.moves_made.add(cell)
+
+        # 2)
         self.mark_safe(cell)
-        i, j = cell
 
-        print(f"moves_made upated: {self.moves_made}")
-        print(f"Move at {i}, {j}.")
-
-        # 3) working properly.
+        # 3)
         cells = set()
-        for i in range(cell[0]-1, cell[0]+2):
-            for j in range(cell[1]-1, cell[1]+2):
-                if (i, j) not in self.mines and (i, j) not in self.safes:
-                    if 0 <= i < self.height and 0 <= j < self.width:
-                        cells.add((i, j))
-        self.knowledge.append(Sentence(cells, count))
-        
-        print(f"New knowledge added: {self.knowledge[-1]}")
-         
+        count_cpy = copy.deepcopy(count)
+        board = set()
+        for rows in range(self.height):
+            for columns in range(self.width):
+                if abs(cell[0] - rows) <= 1 and abs(cell[1] - columns) <= 1 and (rows, columns) != cell:
+                    board.add((rows, columns))
+        for cell in board:
+            if cell in self.mines:
+                count_cpy -= 1
+            if cell not in self.mines and cell not in self.safes:
+                cells.add(cell)
+
+        if len(cells) > 0:
+            self.knowledge.append(Sentence(cells, count_cpy))
+
+
         # 4)
-        # TODO
-        raise NotImplementedError
+        self.update_KB()
+        # 5) 
+        self.inference()
+        
 
+    def update_KB(self):
+        """
+        Checks knowledge for new safes and mines and updates knowledge if possible.
+        """
 
+        knowledge_copy = copy.deepcopy(self.knowledge)
+
+        for sentence in knowledge_copy:
+            if len(sentence.cells) == 0:
+                try:
+                    self.knowledge.remove(sentence)
+                except ValueError:
+                    pass
+            mines = sentence.known_mines()
+            safes = sentence.known_safes()
+            if mines:
+                for mine in mines:
+                    self.mark_mine(mine)
+                    self.update_KB()
+            if safes:
+                for safe in safes:
+                    self.mark_safe(safe)
+                    self.update_KB()
+
+    def inference(self):
+        """
+        Updates knowledge based on inference.
+        """
+
+        knowledge_copy = copy.deepcopy(self.knowledge)
+
+        for set1 in knowledge_copy:
+            if set1.cells == set():
+                self.knowledge.remove(set1)
+                continue
+
+            for set2 in knowledge_copy:
+                if set2.cells == set():
+                    self.knowledge.remove(set2)
+                    continue
+
+                if set1.cells.issubset(set2.cells):
+                    inference = Sentence(set2.cells - set1.cells, set2.count - set1.count)
+
+                    mines = inference.known_mines()
+                    safes = inference.known_safes()
+
+                    if mines:
+                        for mine in mines:
+                            self.mark_mine(mine)
+                    if safes:
+                        for safe in safes:
+                            self.mark_safe(safe)
 
     def make_safe_move(self):
         """
@@ -222,8 +286,9 @@ class MinesweeperAI():
         This function may use the knowledge in self.mines, self.safes
         and self.moves_made, but should not modify any of those values.
         """
-        not_made_safe_moves = self.safes.difference(self.moves_made)
-        return random.choice(not_made_safe_moves) if not_made_safe_moves else None
+        for i in self.safes - self.moves_made:
+            return i
+        return None
 
     def make_random_move(self):
         """
@@ -232,13 +297,9 @@ class MinesweeperAI():
             1) have not already been chosen, and
             2) are not known to be mines
         """
-        board = []
-        for i in range(self.height):
-            for j in range(self.width):
-                board.append((i, j))
-        for cell in board:
-            if cell in self.moves_made or cell in self.mines:
-                board.remove(cell)
-        
-        i, j = random.choice(board)
-        return (i, j)
+
+        i = random.randrange(self.height)
+        j = random.randrange(self.width)
+        if (i, j) not in self.moves_made and (i, j) not in self.mines:
+            return (i, j)
+        return None
