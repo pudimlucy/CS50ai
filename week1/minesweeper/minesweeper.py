@@ -3,13 +3,12 @@ import random
 import copy
 
 
-class Minesweeper():
+class Minesweeper:
     """
     Minesweeper game representation
     """
 
     def __init__(self, height=8, width=8, mines=8):
-
         # Set initial width, height, and number of mines
         self.height = height
         self.width = width
@@ -66,7 +65,6 @@ class Minesweeper():
         # Loop over all cells within one row and column
         for i in range(cell[0] - 1, cell[0] + 2):
             for j in range(cell[1] - 1, cell[1] + 2):
-
                 # Ignore the cell itself
                 if (i, j) == cell:
                     continue
@@ -85,7 +83,7 @@ class Minesweeper():
         return self.mines_found == self.mines
 
 
-class Sentence():
+class Sentence:
     """
     Logical statement about a Minesweeper game
     A sentence consists of a set of board cells,
@@ -138,13 +136,12 @@ class Sentence():
             pass
 
 
-class MinesweeperAI():
+class MinesweeperAI:
     """
     Minesweeper game player
     """
 
     def __init__(self, height=8, width=8):
-
         # Set initial height and width
         self.height = height
         self.width = width
@@ -200,44 +197,61 @@ class MinesweeperAI():
         self.mark_safe(cell)
 
         # 3)
-        cells = set()
+        # copies count value for alteration
         count_cpy = copy.deepcopy(count)
-        board = set()
-        for rows in range(self.height):
-            for columns in range(self.width):
-                if abs(cell[0] - rows) <= 1 and abs(cell[1] - columns) <= 1 and (rows, columns) != cell:
-                    board.add((rows, columns))
-        for cell in board:
+
+        # creates an set for sentence's cells and an board for neighbouring cells
+        cells = set()
+        neighbours = set()
+
+        # iterates over board
+        for i in range(self.height):
+            for j in range(self.width):
+                # if current cell is an neighbouring cell, adds it to neighbours set
+                if (
+                    abs(cell[0] - i) <= 1
+                    and abs(cell[1] - j) <= 1
+                    and (i, j) != cell
+                ):
+                    neighbours.add((i, j))
+        
+        # iterates over neighbouring cells
+        for cell in neighbours:
+            # if it's an know mine, decrease count
             if cell in self.mines:
                 count_cpy -= 1
+            # if it's state is unknow, adds it to new sentence
             if cell not in self.mines and cell not in self.safes:
                 cells.add(cell)
 
+        # appends new knowledge
         if len(cells) > 0:
             self.knowledge.append(Sentence(cells, count_cpy))
 
-
         # 4)
         self.update_KB()
-        # 5) 
+        # 5)
         self.inference()
-        
 
     def update_KB(self):
         """
-        Checks knowledge for new safes and mines and updates knowledge if possible.
+        Checks knowledge base for new safes and mines and updates knowledge if possible.
         """
 
-        knowledge_copy = copy.deepcopy(self.knowledge)
+        # copies knowledge base for alteration
+        kb_copy = copy.deepcopy(self.knowledge)
 
-        for sentence in knowledge_copy:
-            if len(sentence.cells) == 0:
+        # iterates over knowledge base
+        for set in kb_copy:
+            # removes empty knowledge
+            if len(set.cells) == 0:
                 try:
-                    self.knowledge.remove(sentence)
+                    self.knowledge.remove(set)
                 except ValueError:
                     pass
-            mines = sentence.known_mines()
-            safes = sentence.known_safes()
+            # iterates over known mines and known safes
+            mines = set.known_mines()
+            safes = set.known_safes()
             if mines:
                 for mine in mines:
                     self.mark_mine(mine)
@@ -252,8 +266,10 @@ class MinesweeperAI():
         Updates knowledge based on inference.
         """
 
+        # copies knowledge base for alteration
         knowledge_copy = copy.deepcopy(self.knowledge)
 
+        # iterates over sentences, removing empty sentences
         for set1 in knowledge_copy:
             if set1.cells == set():
                 self.knowledge.remove(set1)
@@ -263,19 +279,18 @@ class MinesweeperAI():
                 if set2.cells == set():
                     self.knowledge.remove(set2)
                     continue
-
+                
+                # checks if set1 is a subset of set2 and inferences new sentence
                 if set1.cells.issubset(set2.cells):
-                    inference = Sentence(set2.cells - set1.cells, set2.count - set1.count)
+                    inference = Sentence(
+                        set2.cells - set1.cells, set2.count - set1.count
+                    )
+                    # adds new inference if it's valid
+                    if len(inference.cells) > 0 and inference not in self.knowledge:
+                        self.knowledge.append(inference)
 
-                    mines = inference.known_mines()
-                    safes = inference.known_safes()
-
-                    if mines:
-                        for mine in mines:
-                            self.mark_mine(mine)
-                    if safes:
-                        for safe in safes:
-                            self.mark_safe(safe)
+                    # updates knowledge base for new mines and safes
+                    self.update_KB()
 
     def make_safe_move(self):
         """
