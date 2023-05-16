@@ -63,7 +63,7 @@ def transition_model(corpus, page, damping_factor):
 
         # Chance of chooosing link at random from links in page
         for link in corpus[page]:
-            distribution[link] = +damping_factor / len(corpus[page])
+            distribution[link] += damping_factor / len(corpus[page])
     else:
         # Chance of chooosing link at random from pages in corpus, given there's no links in page
         for link in corpus:
