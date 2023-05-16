@@ -40,10 +40,7 @@ def crawl(directory):
 
     # Only include links to other pages in the corpus
     for filename in pages:
-        pages[filename] = set(
-            link for link in pages[filename]
-            if link in pages
-        )
+        pages[filename] = set(link for link in pages[filename] if link in pages)
 
     return pages
 
@@ -66,7 +63,7 @@ def transition_model(corpus, page, damping_factor):
 
         # Chance of chooosing link at random from links in page
         for link in corpus[page]:
-            distribution[link] =+ damping_factor / len(corpus[page])
+            distribution[link] = +damping_factor / len(corpus[page])
     else:
         # Chance of chooosing link at random from pages in corpus, given there's no links in page
         for link in corpus:
@@ -86,7 +83,7 @@ def sample_pagerank(corpus, damping_factor, n):
     """
     # Sets all page's initial rankings to 0
     pagerank = {page: 0 for page in corpus}
-    
+
     # Samples pages
     for _ in range(0, n):
         # If all rankings are 0, sample initial page
@@ -111,7 +108,45 @@ def iterate_pagerank(corpus, damping_factor):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
-    raise NotImplementedError
+    N = len(corpus)
+    threshold = 0.001
+
+    # Sets all page's initial rankings to 1 / N
+    pagerank = {page: 1 / N for page in corpus}
+
+    # Copies corpus, making pages with no links have links for every page
+    new_corpus = {
+        key: corpus[key] if corpus[key] != set() else set(corpus.keys())
+        for key in corpus.keys()
+    }
+
+    # Applies pagerank formula, counting how many pages converged
+    while True:
+        count = 0
+        # Iterates over every page
+        for page in new_corpus:
+            # Initial sum value
+            rank = (1 - damping_factor) / N
+            sigma = 0
+            # Iterates over pages that link to current page
+            for i in new_corpus:
+                if page in new_corpus[i]:
+                    # Increases sum
+                    sigma += pagerank[i] / len(new_corpus[i])
+            # Multiplies sum by damping factor and adds it to total value
+            sigma *= damping_factor
+            rank += sigma
+
+            # Checks if page hit threshold
+            if abs(pagerank[page] - rank) < threshold:
+                count += 1
+            
+            pagerank[page] = rank
+
+        if count == N:
+            break
+
+    return pagerank
 
 
 if __name__ == "__main__":
