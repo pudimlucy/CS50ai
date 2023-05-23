@@ -13,3 +13,7 @@ pset 1:
 pset 2:  
      1. Pagerank  
      2. Heredity  
+  
+pset 3:  
+     1. Crossword  
+  
