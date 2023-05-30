@@ -102,12 +102,13 @@ class CrosswordCreator:
         (Remove any values that are inconsistent with a variable's unary
          constraints; in this case, the length of the word.)
         """
+        # Iterates over every variable v.
         for v in self.crossword.variables:
+            # Creates a set of inconsistencies.
             inconsistent = set([x for x in self.domains[v] if len(x) != v.length])
+            # Then removes them from v's domain, if any.
             if inconsistent:
                 self.domains[v] = self.domains[v] - inconsistent
-
-            print(v.length, self.domains[v])
 
     def revise(self, x, y):
         """
@@ -118,7 +119,25 @@ class CrosswordCreator:
         Return True if a revision was made to the domain of `x`; return
         False if no revision was made.
         """
-        raise NotImplementedError
+        # Gets the ith, jth positions of the overlap for respective variables.
+        try:
+            i, j = self.crossword.overlaps[x, y]
+        except TypeError:
+            # No overlap, no revision made.
+            return False
+
+        # Creates a set of inconsistencies in x's domain given y's domain.
+        inconsistent = set(
+            [xw for xw in self.domains[x] if xw[i] != yw[j] for yw in self.domains[y]]
+        )
+
+        # Then removes them from x's domain, if any.
+        if inconsistent:
+            self.domains[x] = self.domains[x] - inconsistent
+            return True
+
+        # No inconsistencies, no revision.
+        return False
 
     def ac3(self, arcs=None):
         """
