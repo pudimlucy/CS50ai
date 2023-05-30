@@ -1,5 +1,6 @@
 import sys
 from copy import deepcopy
+from random import randrange
 
 from crossword import *
 
@@ -148,7 +149,37 @@ class CrosswordCreator:
         Return True if arc consistency is enforced and no domains are empty;
         return False if one or more domains end up empty.
         """
-        raise NotImplementedError
+        # If arcs is none, arcs set to initial list of arcs.
+        if not arcs:
+            arcs = [
+                (x, y)
+                for x in self.domains
+                for y in self.domains
+                if x != y and self.crossword.overlaps[x, y] is not None
+            ]
+
+        # Iterates oveer every arc.
+        while arcs:
+            # Selects any arc.
+            x, y = arcs.pop(randrange(len(arcs)))
+
+            # Revises selected arc.
+            if self.revise(x, y):
+                # No more possible values, impossible to solve.
+                if not self.domains[x]:
+                    return False
+
+                # If successufuly revised, extends queue with new arcs.
+                arcs.extend(
+                    [
+                        (z, x)
+                        for z in self.crossword.neighbors(x)
+                        if z != y and (z, x) not in arcs
+                    ]
+                )
+
+        # Arc consistency enforced.
+        return True
 
     def assignment_complete(self, assignment):
         """
