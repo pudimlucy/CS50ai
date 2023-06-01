@@ -1,6 +1,6 @@
 import sys
 from copy import deepcopy
-from random import randrange
+from random import randrange, choice
 
 from crossword import *
 
@@ -233,7 +233,7 @@ class CrosswordCreator:
         # Copies var's domain, excluding variables already assigned
         variables = [v for v in self.domains[var] if v not in assignment]
 
-        # Creates a dictionary of variable: affected neighbours pairs
+        # Creates a dictionary of variable: quantity of affected neighbours pairs
         values = {
             v: len(
                 [
@@ -245,7 +245,7 @@ class CrosswordCreator:
             for v in variables
         }
 
-        # Sorts dictionary by values and returns it's keys
+        # Sorts dictionary by values and returns it's keys as a list
         return [item[0] for item in sorted(values.items(), key=lambda item: item[1])]
 
     def select_unassigned_variable(self, assignment):
@@ -256,7 +256,8 @@ class CrosswordCreator:
         degree. If there is a tie, any of the tied variables are acceptable
         return values.
         """
-        raise NotImplementedError
+        # TODO: MRV and degree heuristics.
+        return choice([var for var in self.domains if var not in assignment])
 
     def backtrack(self, assignment):
         """
