@@ -128,9 +128,8 @@ class CrosswordCreator:
             return False
 
         # Creates a set of inconsistencies in x's domain given y's domain.
-        inconsistent = set(
-            [xw for xw in self.domains[x] if xw[i] != yw[j] for yw in self.domains[y]]
-        )
+        y_domain = [yw[j] for yw in self.domains[y]]
+        inconsistent = set([xw for xw in self.domains[x] if xw[i] not in y_domain])
 
         # Then removes them from x's domain, if any.
         if inconsistent:
@@ -231,18 +230,18 @@ class CrosswordCreator:
         that rules out the fewest values among the neighbors of `var`.
         """
         # Copies var's domain, excluding variables already assigned
-        variables = [v for v in self.domains[var] if v not in assignment]
+        domain = [v for v in self.domains[var] if v not in assignment]
 
-        # Creates a dictionary of variable: quantity of affected neighbours pairs
+        # Creates a dictionary of value: quantity of affected neighbours pairs
         values = {
-            v: len(
+            value: len(
                 [
                     neighbour
                     for neighbour in self.crossword.neighbors(var)
-                    if v in self.domains[neighbour]
+                    if value in self.domains[neighbour]
                 ]
             )
-            for v in variables
+            for value in domain
         }
 
         # Sorts dictionary by values and returns it's keys as a list
@@ -256,8 +255,53 @@ class CrosswordCreator:
         degree. If there is a tie, any of the tied variables are acceptable
         return values.
         """
-        # TODO: MRV and degree heuristics.
-        return choice([var for var in self.domains if var not in assignment])
+        # Gets unassigned variables
+        unassigned = [var for var in self.crossword.variables if var not in assignment]
+
+        # Gets variable's domain lengths and filters by MRV
+        remaining = [len(self.domains[var]) for var in unassigned]
+        unassigned = [
+            unassigned[index]
+            for index in [i for i, j in enumerate(remaining) if j == min(remaining)]
+        ]
+
+        # Gets variable's degrees and filters by degree
+        degrees = [len(self.crossword.neighbors(var)) for var in unassigned]
+        unassigned = [
+            unassigned[index]
+            for index in [i for i, j in enumerate(degrees) if j == max(degrees)]
+        ]
+
+        # Picks randomly from filtered variables.
+        return choice(unassigned)
+
+    def inference(self, assignment, var):
+        """
+        Updates the domain and current assignment via inference,
+        enforcing arc and node consistency, given a  variable `var`
+        and a uncompleted assignment `assignment`.
+
+        Returns the updated `assignment` and the `inferences` made.
+        """
+        # 1. Enforces arc consistency
+        # Creates empty inferences list
+        inferences = list()
+
+        # Creates a list of arcs of var and it's neighbours then enforces arc consistency
+        arcs = [(neighbour, var) for neighbour in self.crossword.neighbors(var)]
+        self.ac3(arcs)
+
+        # 2. Enforces node consistency
+        # Iterates over every variable in the domain
+        for v in self.domains:
+            # Checks for possible values
+            if len(self.domains[v]) == 1:
+                # If only one, assigns it to assignment and deletes from domain
+                assignment[v] = self.domains[v].pop()
+                inferences.append(v)
+
+        # Returns updated assignment and inferences
+        return (assignment, inferences)
 
     def backtrack(self, assignment):
         """
@@ -268,7 +312,33 @@ class CrosswordCreator:
 
         If no assignment is possible, return None.
         """
-        raise NotImplementedError
+        # Returns completed assignment
+        if self.assignment_complete(assignment):
+            return assignment
+        
+        # Selects an unassigned variable
+        var = self.select_unassigned_variable(assignment)
+
+        # Orders the var's domain by least constraining value and then iterates over it
+        for value in self.order_domain_values(var, assignment):
+            assignment[var] = value
+            inferences = []
+            if self.consistent(assignment):
+                # Updates domain and assignment via inference
+                assignment, inferences = self.inference(assignment, var)
+
+                # Backtracks with current assignment
+                result = self.backtrack(assignment)
+                if result:
+                    return result
+
+            # If now inconsistent, deletes variable and inferences from assignment
+            del assignment[var]
+            for inference in inferences:
+                del assignment[inference]
+
+        # No satisfying assignment is possible
+        return None
 
 
 def main():
