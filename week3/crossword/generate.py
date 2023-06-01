@@ -198,9 +198,9 @@ class CrosswordCreator:
         Return True if `assignment` is consistent (i.e., words fit in crossword
         puzzle without conflicting characters); return False otherwise.
         """
-        checked = []
+        checked = list()
         for v1 in assignment:
-            # Checks conflicting lenght
+            # Checks conflicting length
             if len(assignment[v1]) != v1.length:
                 return False
 
@@ -230,7 +230,23 @@ class CrosswordCreator:
         The first value in the list, for example, should be the one
         that rules out the fewest values among the neighbors of `var`.
         """
-        raise NotImplementedError
+        # Copies var's domain, excluding variables already assigned
+        variables = [v for v in self.domains[var] if v not in assignment]
+
+        # Creates a dictionary of variable: affected neighbours pairs
+        values = {
+            v: len(
+                [
+                    neighbour
+                    for neighbour in self.crossword.neighbors(var)
+                    if v in self.domains[neighbour]
+                ]
+            )
+            for v in variables
+        }
+
+        # Sorts dictionary by values and returns it's keys
+        return [item[0] for item in sorted(values.items(), key=lambda item: item[1])]
 
     def select_unassigned_variable(self, assignment):
         """
