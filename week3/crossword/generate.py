@@ -158,6 +158,11 @@ class CrosswordCreator:
                 if x != y and self.crossword.overlaps[x, y] is not None
             ]
 
+        # Removes inverse duplicates.
+        for x, y in arcs:
+            if (y, x) in arcs:
+                arcs.remove((y, x))
+
         # Iterates oveer every arc.
         while arcs:
             # Selects any arc.
@@ -174,7 +179,7 @@ class CrosswordCreator:
                     [
                         (z, x)
                         for z in self.crossword.neighbors(x)
-                        if z != y and (z, x) not in arcs
+                        if z != y and ((z, x) not in arcs or (x, z) not in arcs)
                     ]
                 )
 
@@ -193,7 +198,30 @@ class CrosswordCreator:
         Return True if `assignment` is consistent (i.e., words fit in crossword
         puzzle without conflicting characters); return False otherwise.
         """
-        raise NotImplementedError
+        checked = []
+        for v1 in assignment:
+            # Checks conflicting lenght
+            if len(assignment[v1]) != v1.length:
+                return False
+
+            # Checks conflicting characters on overlaps
+            for neighbour in self.crossword.neighbors(v1):
+                if neighbour not in assignment or neighbour in checked:
+                    continue
+
+                i, j = self.crossword.overlaps[v1, neighbour]
+                if assignment[v1][i] != assignment[neighbour][j]:
+                    return False
+
+            # Checks conflicting words
+            for v2 in assignment:
+                if v1 is v2 or v2 in checked:
+                    continue
+                if assignment[v1] == assignment[v2]:
+                    return False
+
+            checked.append(v1)
+        return True
 
     def order_domain_values(self, var, assignment):
         """
