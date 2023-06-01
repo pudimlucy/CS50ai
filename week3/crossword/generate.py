@@ -186,10 +186,7 @@ class CrosswordCreator:
         Return True if `assignment` is complete (i.e., assigns a value to each
         crossword variable); return False otherwise.
         """
-        for v in self.domains:
-            if v not in assignment:
-                return False
-        return True
+        return all(v in assignment for v in self.domains)
 
     def consistent(self, assignment):
         """
