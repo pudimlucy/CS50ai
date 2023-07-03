@@ -17,3 +17,7 @@ pset 2:
 pset 3:  
      1. Crossword  
   
+pset 4:  
+     1. Shopping  
+     2. Nim
+  
