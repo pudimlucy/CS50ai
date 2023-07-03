@@ -4,6 +4,11 @@ from random import randrange, choice
 
 from crossword import *
 
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning) 
+
+import time
+
 
 class CrosswordCreator:
     def __init__(self, crossword):
@@ -354,7 +359,10 @@ def main():
     # Generate crossword
     crossword = Crossword(structure, words)
     creator = CrosswordCreator(crossword)
+
+    t0 = time.time()
     assignment = creator.solve()
+    print("--- solved in %0.5f seconds ---" % (time.time() - t0))
 
     # Print result
     if assignment is None:
