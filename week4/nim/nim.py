@@ -159,13 +159,13 @@ class NimAI:
         """
         actions = Nim.available_actions(state)
         if epsilon:
-            return random.choice(actions)
+            return random.choice(list(actions))
 
         best_q_value = self.best_future_reward(state)
         return random.choice(
             [
                 action
-                for action in actions
+                for action in list(actions)
                 if self.get_q_value(state, action) == best_q_value
             ]
         )
