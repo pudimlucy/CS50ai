@@ -102,7 +102,7 @@ class NimAI():
         If no Q-value exists yet in `self.q`, return 0.
         """
         try:
-            return self.q[state, action]
+            return self.q[tuple(state), action]
         except KeyError:
             return 0
 
@@ -122,7 +122,7 @@ class NimAI():
         is the sum of the current reward and estimated future rewards.
         """
         new_q = old_q + self.alpha * (reward + future_rewards - old_q)
-        self.q[state, action].update({(state, action): new_q})
+        self.q.update({(tuple(state), action): new_q})
 
     def best_future_reward(self, state):
         """
@@ -134,7 +134,14 @@ class NimAI():
         Q-value in `self.q`. If there are no available actions in
         `state`, return 0.
         """
-        raise NotImplementedError
+
+        actions = Nim.available_actions(state)
+        if not actions:
+            return 0
+        
+        best_q_value = max([self.get_q_value(tuple(state), action) for action in actions])
+        return best_q_value
+
 
     def choose_action(self, state, epsilon=True):
         """
