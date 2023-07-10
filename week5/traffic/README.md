@@ -20,3 +20,8 @@
     -> Altered hidden layer nodes to NUM_CATEGORIES*8.
     -> loss on small db: 1.0248, loss on main db: 0.2344  
     -> Dramatic change in accuracy of 0.9 on main db, however far slower and less accurate given smaller category range.  
+  
+5. Traffic 2.4  
+    -> Altered hidden layer nodes to NUM_CATEGORIES*16, pool size to 4 by 4, hidden layer dropout rate to 0.05 and input dropout to 0.1.
+    -> loss on small db: 0.0028, loss on main db: 0.3867  
+    -> Decided to change my approach, by dramatically decreasing dropout rate and doubling the number of hidden layer nodes, increasing the pool size for time sake. As expected, the model did overfit: the accuracy in the 10th epoch was 0.94, but in the evaluation stage 0.92. Nonetheless, overall accuracy did increase, also seemingly fixing the issue with small category ranges from the last version. Increasing the number of hidden layers only decreased accuracy on both databases, for reasons I don't fully understand - maybe the complexity was too high, increasing the "entropy" and turning overal results more even?  
