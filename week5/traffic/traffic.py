@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 EPOCHS = 10
 IMG_WIDTH = 30
 IMG_HEIGHT = 30
-NUM_CATEGORIES = 43
+NUM_CATEGORIES = 3
 TEST_SIZE = 0.4
 
 
@@ -87,8 +87,8 @@ def get_model():
             tf.keras.layers.Flatten(),
             tf.keras.layers.Dropout(0.3),
 
-            tf.keras.layers.Dense(128, activation="relu"),
-            tf.keras.layers.Dropout(0.5),
+            tf.keras.layers.Dense(NUM_CATEGORIES*8, activation="relu"),
+            tf.keras.layers.Dropout(0.3),
 
             tf.keras.layers.Dense(NUM_CATEGORIES, activation="softmax"),
         ]
