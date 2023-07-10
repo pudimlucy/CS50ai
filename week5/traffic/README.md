@@ -10,3 +10,8 @@
     -> loss on small db: 3.5479e-10, loss on main db: 0.7775  
     -> Quite dramatic change, but stil has an accuracy of about 0.7. I will keep
        tweaking with the dropout rate in the next version.
+
+3. Traffic 2.2  
+    -> Altered dropout on hidden layer (0.3 -> 0.5).
+    -> loss on small db: 7.0958e-10, loss on main db: 3.5013  
+    -> Increase in hidden layer dropout has decreased accuracy. Will try to find a optimal point between the dropout rates.
