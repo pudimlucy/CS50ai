@@ -40,3 +40,8 @@
     -> Doubled learned filters and hidden layer nodes.
     -> loss on small db: 0.0015, loss on main db: 3.4912  
     -> More than expected, the severe increase in complexity did increase the running time by a large margin - around three times slower - but I wanted to test how that increase in complexity would affect complexity given it was already significantly high. Given the previous attempts, on minor scales, of an dramatic increase of complexity, I was actually expecting the drop in accuracy - but not one that dramatic! 0.05 accuracy is barely better than guessing (1/43)! Further development will return to previous version.
+
+9. Traffic 2.8  
+    -> Returned to 2.6, removed input dropout, added new hidden layer with NUM_CATEGORIES*4 nodes.
+    -> loss on small db: 0.0200, loss on main db: 0.1648  
+    -> Running time was affected less than I expected, with a slight increase in accuracy (0.94 -> 0.95). Notably, however, the accuracy seemed to stabalize after the 8th epoch: 0.9498 -> 0.9416 -> 0.9511, and 0.9596 on evaluation. I suspect removing the dropout rate on the input layer overfitted some nodes.
