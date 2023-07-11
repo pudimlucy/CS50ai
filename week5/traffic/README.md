@@ -45,3 +45,8 @@
     -> Returned to 2.6, removed input dropout, added new hidden layer with NUM_CATEGORIES*4 nodes.
     -> loss on small db: 0.0200, loss on main db: 0.1648  
     -> Running time was affected less than I expected, with a slight increase in accuracy (0.94 -> 0.95). Notably, however, the accuracy seemed to stabalize after the 8th epoch: 0.9498 -> 0.9416 -> 0.9511, and 0.9596 on evaluation. I suspect removing the dropout rate on the input layer overfitted some nodes.
+
+10. Traffic 2.8.1  
+    -> Returned input dropout.
+    -> loss on small db: 0.0413, loss on main db: 0.1226  
+    -> Seems to have worked! Accuracy on the 10th epoch was 0.93, and on evaluation 0.96. Out of suspicion it might have been a fluke, I re-runned traffic.py on the larger database twice: 0.94 and 0.97 accuracy on both evaluations. On both evaluations, yet again, the evaluation accuracy were quite higher than the 10th's epoch; 0.9212 and 0.9294, respectively.  

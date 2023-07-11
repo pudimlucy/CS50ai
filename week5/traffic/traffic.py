@@ -90,6 +90,7 @@ def get_model():
             tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
 
             tf.keras.layers.Flatten(),
+            tf.keras.layers.Dropout(0.2),
 
             tf.keras.layers.Dense(NUM_CATEGORIES*16, activation="relu"),
             tf.keras.layers.Dropout(0.2),
