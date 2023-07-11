@@ -60,15 +60,15 @@ def load_data(data_dir):
     images = list()
     labels = list()
 
-    for label, directory in enumerate(os.scandir(data_dir)):
-        for img_file in os.scandir(directory.path):
-            img = cv2.imread(img_file.path)
-            img = cv2.resize(img, (IMG_WIDTH, IMG_HEIGHT), interpolation=cv2.INTER_AREA)
-
+    for i in range(NUM_CATEGORIES):
+        path = os.path.join(data_dir, str(i))
+        for image in os.scandir(path):
+            img = cv2.imread(image.path)
+            img = cv2.resize(img, (IMG_WIDTH, IMG_HEIGHT))
             images.append(img)
-            labels.append(label)
+            labels.append(i)
 
-    return (images, labels)
+    return images, labels
 
 
 def get_model():

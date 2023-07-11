@@ -30,3 +30,8 @@
     -> Added an convolutional layer and an max-pooling layer, altered pool sizes to 2 by 2 and changed dropout rate to 0.2, added hidden layer of NUM_CATEGORIES*8 nodes.
     -> loss on small db: 0.0216, loss on main db: 0.1146  
     -> Considerable improvement! Accuracy on main db up to 0.9770 on evaluation stage, and 0.9531 on 10th epoch. However, the running time did dramatically increased. Maintaining the 4 by 4 pool size on the first conv. layer is a compromise between running time and accuracy; about half of the running time, with an accuracy of 0.9. Both versions will be tested in future versions.  
+
+7. Traffic 2.6  
+    -> Fixed load_data.
+    -> loss on small db: 0.0033, loss on main db: 0.2205  
+    -> After some testing and investigation, the accuracy outputed by traffic.py and the actual accuracy of the model did not match. I assumed the cause was associated on how the loaded data was organized - I am not sure exactly where the last version of the function was faulty (perhaps the call on enumerate?), but it seems to be working properly now, although with accuracy dropping to 0.94.
