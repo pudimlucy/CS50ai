@@ -35,3 +35,8 @@
     -> Fixed load_data.
     -> loss on small db: 0.0033, loss on main db: 0.2205  
     -> After some testing and investigation, the accuracy outputed by traffic.py and the actual accuracy of the model did not match. I assumed the cause was associated on how the loaded data was organized - I am not sure exactly where the last version of the function was faulty (perhaps the call on enumerate?), but it seems to be working properly now, although with accuracy dropping to 0.94.
+
+8. Traffic 2.7  
+    -> Doubled learned filters and hidden layer nodes.
+    -> loss on small db: 0.0015, loss on main db: 3.4912  
+    -> More than expected, the severe increase in complexity did increase the running time by a large margin - around three times slower - but I wanted to test how that increase in complexity would affect complexity given it was already significantly high. Given the previous attempts, on minor scales, of an dramatic increase of complexity, I was actually expecting the drop in accuracy - but not one that dramatic! 0.05 accuracy is barely better than guessing (1/43)! Further development will return to previous version.
