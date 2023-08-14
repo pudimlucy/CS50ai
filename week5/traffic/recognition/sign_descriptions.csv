@@ -1,0 +1,44 @@
+﻿code,description
+0,VMP 20km/h
+1,VMP 30km/h
+2,VMP 50km/h
+3,VMP 60km/h
+4,VMP 70km/h
+5,VMP 80km/h
+6,Fim de VMP 80km/h
+7,VMP 100km/h
+8,VMP 120km/h
+9,Proibido ultrapassar
+10,Peso maximo 3.5t 
+11,Interseção perigosa
+12,Rua prioritaria
+13,De a preferencia
+14,Pare
+15,Proibido automoveis
+16,Peso maximo 3.5t
+17,Proibido pedestres
+18,Cuidado geral
+19,Curva perigosa a esquerda
+20,Curva perigosa a direita
+21,Curva dupla
+22,Pista irregular
+23,Pista escorregadia
+24,Estreitamento a Direita
+25,Obras
+26,Semaforo a Frente
+27,Pedestres
+28,Criancas
+29,Bicicletas
+30,Cuidado com gelo/neve
+31,Animais selvagens
+32,Fim de todos limites
+33,Vire a direita
+34,Vire a esquerda
+35,Siga em frente
+36,Siga em frente ou a direita
+37,Siga em frente ou a esquerda
+38,Conserve-se a direita
+39,Conserve-se a esquerda
+40,Rotatória obrigatória
+41,Fim de passagem proibida
+42,Fim de passagem proibida por peso
