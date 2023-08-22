@@ -1,5 +1,6 @@
 import nltk
 import sys
+import re
 
 TERMINALS = """
 Adj -> "country" | "dreadful" | "enigmatical" | "little" | "moist" | "red"
@@ -67,7 +68,7 @@ def preprocess(sentence):
     """
     tokenizer = nltk.tokenize.RegexpTokenizer("(\S*[A-Za-z]+\S*)+")
     tokens = tokenizer.tokenize(sentence)
-    return [token.lower() for token in tokens]
+    return [re.sub(r'[^a-zA-Z0-9]','',token).lower() for token in tokens]
 
 
 def np_chunk(tree):
