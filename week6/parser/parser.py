@@ -56,13 +56,15 @@ def main():
 
 
 def preprocess(sentence):
-    """
+    """n
     Convert `sentence` to a list of its words.
     Pre-process sentence by converting all characters to lowercase
     and removing any word that does not contain at least one alphabetic
     character.
     """
-    raise NotImplementedError
+    tokenizer = nltk.tokenize.RegexpTokenizer("(\S*[A-Za-z]+\S*)+")
+    tokens = tokenizer.tokenize(sentence)
+    return [token.lower() for token in tokens]
 
 
 def np_chunk(tree):
