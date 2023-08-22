@@ -27,7 +27,6 @@ parser = nltk.ChartParser(grammar)
 
 
 def main():
-
     # If filename specified, read sentence from file
     if len(sys.argv) == 2:
         with open(sys.argv[1]) as f:
@@ -68,7 +67,7 @@ def preprocess(sentence):
     """
     tokenizer = nltk.tokenize.RegexpTokenizer("(\S*[A-Za-z]+\S*)+")
     tokens = tokenizer.tokenize(sentence)
-    return [re.sub(r'[^a-zA-Z0-9]','',token).lower() for token in tokens]
+    return [re.sub(r"[^a-zA-Z0-9]", "", token).lower() for token in tokens]
 
 
 def np_chunk(tree):
