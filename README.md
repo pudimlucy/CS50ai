@@ -20,4 +20,11 @@ pset 3:
 pset 4:  
      1. Shopping  
      2. Nim
-  
+
+pset 5:  
+     1. Traffic  
+
+pset 6:  
+     1. Parser  
+     2. Attention  
+     3. Questions  
