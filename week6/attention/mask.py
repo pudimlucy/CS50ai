@@ -1,5 +1,6 @@
 import sys
 import tensorflow as tf
+import numpy as np
 
 from PIL import Image, ImageDraw, ImageFont
 from transformers import AutoTokenizer, TFBertForMaskedLM
@@ -45,11 +46,12 @@ def get_mask_token_index(mask_token_id, inputs):
     Return the index of the token with the specified `mask_token_id`, or
     `None` if not present in the `inputs`.
     """
-    encoded_sequence = inputs["input_ids"]
-    try:
-        return encoded_sequence.index(mask_token_id)
-    except ValueError:
-        return None
+    encoded_sequence = inputs["input_ids"]._numpy()
+    index = np.where(encoded_sequence == mask_token_id)[0]
+    if index.size > 0:
+        return index[0]
+    return None
+    
 
 
 def get_color_for_attention_score(attention_score):
