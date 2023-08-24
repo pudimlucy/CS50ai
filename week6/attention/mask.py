@@ -16,10 +16,15 @@ MODEL = "bert-base-uncased"
 K = 3
 
 # Constants for generating attention diagrams
-current_dir = os.path.abspath(os.curdir)
-file = open(os.path.join(current_dir, "assets", "fonts", "OpenSans-Regular.ttf"), "rb")
-b_font = BytesIO(file.read())
-FONT = ImageFont.truetype(b_font, 28)
+CURRENT_DIR = os.path.abspath(os.curdir)
+FONT = ImageFont.truetype(
+    BytesIO(
+        open(
+            os.path.join(CURRENT_DIR, "assets", "fonts", "OpenSans-Regular.ttf"), "rb"
+        ).read()
+    ),
+    28,
+)
 GRID_SIZE = 40
 PIXELS_PER_WORD = 200
 
@@ -39,7 +44,7 @@ def main():
         model = TFBertForMaskedLM.from_pretrained(sys.argv[1])
     else:
         model = TFBertForMaskedLM.from_pretrained(MODEL)
-        model.save_pretrained(os.path.join(current_dir, "model"))
+        model.save_pretrained(os.path.join(CURRENT_DIR, "model"))
     result = model(**inputs, output_attentions=True)
 
     # Generate predictions
@@ -62,7 +67,6 @@ def get_mask_token_index(mask_token_id, inputs):
     if index[0].size > 0:
         return index[0][0]
     return None
-    
 
 
 def get_color_for_attention_score(attention_score):
