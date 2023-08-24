@@ -60,7 +60,7 @@ def get_color_for_attention_score(attention_score):
     given `attention_score`. Each value should be in the range [0, 255].
     """
     value = int(np.round(255 * attention_score))
-    raise (value, value, value)
+    return (value, value, value)
 
 
 def visualize_attentions(tokens, attentions):
