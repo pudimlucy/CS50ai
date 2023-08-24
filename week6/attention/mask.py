@@ -12,7 +12,7 @@ MODEL = "bert-base-uncased"
 K = 3
 
 # Constants for generating attention diagrams
-FONT = ImageFont.truetype("assets/fonts/OpenSans-Regular.ttf", 28)
+FONT = ImageFont.truetype("attention/assets/fonts/OpenSans-Regular.ttf", 28)
 GRID_SIZE = 40
 PIXELS_PER_WORD = 200
 
@@ -47,9 +47,9 @@ def get_mask_token_index(mask_token_id, inputs):
     `None` if not present in the `inputs`.
     """
     encoded_sequence = inputs["input_ids"]._numpy()
-    index = np.where(encoded_sequence == mask_token_id)[0]
-    if index.size > 0:
-        return index[0]
+    index = np.where(encoded_sequence[0] == mask_token_id)
+    if index[0].size > 0:
+        return index[0][0]
     return None
     
 
