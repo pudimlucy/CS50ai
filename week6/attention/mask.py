@@ -45,7 +45,7 @@ def get_mask_token_index(mask_token_id, inputs):
     Return the index of the token with the specified `mask_token_id`, or
     `None` if not present in the `inputs`.
     """
-    encoded_sequence = inputs["inputs_ids"]
+    encoded_sequence = inputs["input_ids"]
     try:
         return encoded_sequence.index(mask_token_id)
     except ValueError:
@@ -61,7 +61,6 @@ def get_color_for_attention_score(attention_score):
     raise NotImplementedError
 
 
-
 def visualize_attentions(tokens, attentions):
     """
     Produce a graphical representation of self-attention scores.
@@ -73,12 +72,7 @@ def visualize_attentions(tokens, attentions):
     (starting count from 1).
     """
     # TODO: Update this function to produce diagrams for all layers and heads.
-    generate_diagram(
-        1,
-        1,
-        tokens,
-        attentions[0][0][0]
-    )
+    generate_diagram(1, 1, tokens, attentions[0][0][0])
 
 
 def generate_diagram(layer_number, head_number, tokens, attention_weights):
@@ -105,7 +99,7 @@ def generate_diagram(layer_number, head_number, tokens, attention_weights):
             (image_size - PIXELS_PER_WORD, PIXELS_PER_WORD + i * GRID_SIZE),
             token,
             fill="white",
-            font=FONT
+            font=FONT,
         )
         token_image = token_image.rotate(90)
         img.paste(token_image, mask=token_image)
@@ -116,7 +110,7 @@ def generate_diagram(layer_number, head_number, tokens, attention_weights):
             (PIXELS_PER_WORD - width, PIXELS_PER_WORD + i * GRID_SIZE),
             token,
             fill="white",
-            font=FONT
+            font=FONT,
         )
 
     # Draw each word
