@@ -91,7 +91,7 @@ def visualize_attentions(tokens, attentions):
     # TODO: Update this function to produce diagrams for all layers and heads.
     for i, layer in enumerate(attentions):
         for k, head in enumerate(layer[0]):
-            generate_diagram(i+1, k+1, tokens, head)
+            generate_diagram(i + 1, k + 1, tokens, head)
 
 
 def generate_diagram(layer_number, head_number, tokens, attention_weights):
@@ -145,7 +145,9 @@ def generate_diagram(layer_number, head_number, tokens, attention_weights):
         os.mkdir(os.path.join(CURRENT_DIR, "diagrams"))
     except FileExistsError:
         pass
-    path = os.path.join(CURRENT_DIR, "diagrams", f"Attention_Layer{layer_number}_Head{head_number}.png")
+    path = os.path.join(
+        CURRENT_DIR, "diagrams", f"Attention_Layer{layer_number}_Head{head_number}.png"
+    )
     img.save(path)
 
 
