@@ -13,7 +13,7 @@ from io import BytesIO
 MODEL = "bert-base-uncased"
 
 # Number of predictions to generate
-K = 3
+K = 10
 
 # Constants for generating attention diagrams
 CURRENT_DIR = os.path.abspath(os.curdir)
@@ -89,7 +89,9 @@ def visualize_attentions(tokens, attentions):
     (starting count from 1).
     """
     # TODO: Update this function to produce diagrams for all layers and heads.
-    generate_diagram(1, 1, tokens, attentions[0][0][0])
+    for i, layer in enumerate(attentions):
+        for k, head in enumerate(layer[0]):
+            generate_diagram(i+1, k+1, tokens, head)
 
 
 def generate_diagram(layer_number, head_number, tokens, attention_weights):
@@ -139,7 +141,12 @@ def generate_diagram(layer_number, head_number, tokens, attention_weights):
             draw.rectangle((x, y, x + GRID_SIZE, y + GRID_SIZE), fill=color)
 
     # Save image
-    img.save(f"Attention_Layer{layer_number}_Head{head_number}.png")
+    try:
+        os.mkdir(os.path.join(CURRENT_DIR, "diagrams"))
+    except FileExistsError:
+        pass
+    path = os.path.join(CURRENT_DIR, "diagrams", f"Attention_Layer{layer_number}_Head{head_number}.png")
+    img.save(path)
 
 
 if __name__ == "__main__":
