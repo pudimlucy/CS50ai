@@ -1,9 +1,13 @@
 import sys
 import tensorflow as tf
 import numpy as np
+import sys
+import os
 
 from PIL import Image, ImageDraw, ImageFont
 from transformers import AutoTokenizer, TFBertForMaskedLM
+
+from io import BytesIO
 
 # Pre-trained masked language model
 MODEL = "bert-base-uncased"
@@ -12,7 +16,12 @@ MODEL = "bert-base-uncased"
 K = 3
 
 # Constants for generating attention diagrams
-FONT = ImageFont.truetype("assets/fonts/OpenSans-Regular.ttf", 28)
+current_dir = os.path.abspath(os.curdir)
+print(current_dir)
+print(os.path.join(current_dir, "assets", "fonts", "OpenSans-Regular.ttf"))
+file = open(os.path.join(current_dir, "assets", "fonts", "OpenSans-Regular.ttf"), "rb")
+b_font = BytesIO(file.read())
+FONT = ImageFont.truetype(b_font, 28)
 GRID_SIZE = 40
 PIXELS_PER_WORD = 200
 
@@ -27,8 +36,12 @@ def main():
     if mask_token_index is None:
         sys.exit(f"Input must include mask token {tokenizer.mask_token}.")
 
-    # Use model to process input
-    model = TFBertForMaskedLM.from_pretrained(MODEL)
+    # Use model to process input, checking command line argument
+    if len(sys.argv) == 2:
+        model = TFBertForMaskedLM.from_pretrained(sys.argv[1])
+    else:
+        model = TFBertForMaskedLM.from_pretrained(MODEL)
+        model.save_pretrained(os.path.join(current_dir, "model"))
     result = model(**inputs, output_attentions=True)
 
     # Generate predictions
