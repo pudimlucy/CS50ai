@@ -17,8 +17,6 @@ K = 3
 
 # Constants for generating attention diagrams
 current_dir = os.path.abspath(os.curdir)
-print(current_dir)
-print(os.path.join(current_dir, "assets", "fonts", "OpenSans-Regular.ttf"))
 file = open(os.path.join(current_dir, "assets", "fonts", "OpenSans-Regular.ttf"), "rb")
 b_font = BytesIO(file.read())
 FONT = ImageFont.truetype(b_font, 28)
